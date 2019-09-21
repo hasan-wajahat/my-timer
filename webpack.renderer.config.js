@@ -3,9 +3,9 @@ const rules = require('./webpack.rules');
 rules.push({
   test: /\.css$/,
   use: [{
-    loader: 'style-loader'
+    loader: 'style-loader',
   }, {
-    loader: 'css-loader'
+    loader: 'css-loader',
   }],
 }, {
   test: /\.m?js$/,
@@ -13,11 +13,11 @@ rules.push({
   use: {
     loader: 'babel-loader',
     options: {
-      presets: ['@babel/preset-env', '@babel/preset-react']
-    }
+      presets: ['@babel/preset-env', '@babel/preset-react'],
+    },
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx']
+    extensions: ['*', '.js', '.jsx'],
   },
 });
 
