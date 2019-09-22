@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, globalShortcut } = require('electron');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -9,6 +9,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let shouldQuitApp = false;
 
 const createWindow = () => {
   // Create the browser window.
@@ -22,7 +23,7 @@ const createWindow = () => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
@@ -31,6 +32,22 @@ const createWindow = () => {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  mainWindow.on('close', (event) => {
+    if (shouldQuitApp) {
+      mainWindow = null;
+    } else {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+  });
+
+  if (process.platform === 'darwin') {
+    globalShortcut.register('Command+Q', () => {
+      shouldQuitApp = true;
+      app.quit();
+    });
+  }
 };
 
 // This method will be called when Electron has finished
@@ -52,6 +69,8 @@ app.on('activate', () => {
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
+  } else {
+    mainWindow.show();
   }
 });
 

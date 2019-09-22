@@ -32,7 +32,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Hello, World!</h1>
+      <h3>Timer App</h3>
       <p>{formattedTime}</p>
       <button type="button" onClick={toggleTimer}>
         {!intervalValue ? 'Start' : 'Stop' }
