@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 
+const TIMER_STORAGE = 'timer_storage';
+
 const App = () => {
-  const [timeInSecs, setTimeInSecs] = useState(0);
+  const [timeInSecs, setTimeInSecs] = useState(Number(localStorage.getItem(TIMER_STORAGE)) || 0);
   const [intervalValue, setIntervalValue] = useState(null);
 
   const toggleTimer = () => {
     if (!intervalValue) {
       setIntervalValue(setInterval(() => {
-        setTimeInSecs((previousTime) => previousTime + 1);
+        setTimeInSecs((previousTime) => {
+          const updatedTimer = previousTime + 1;
+          localStorage.setItem(TIMER_STORAGE, updatedTimer);
+          return updatedTimer;
+        });
       }, 1000));
     } else {
       clearInterval(intervalValue);
@@ -19,6 +25,7 @@ const App = () => {
     clearInterval(intervalValue);
     setIntervalValue(null);
     setTimeInSecs(0);
+    localStorage.setItem(TIMER_STORAGE, 0);
   };
 
   const formattedTime = (new Date(1000 * timeInSecs).toISOString().substr(11, 8));
