@@ -1,5 +1,6 @@
 // eslint-disable-next-line
-const { app, BrowserWindow, globalShortcut } = require('electron');
+const { app, BrowserWindow, globalShortcut, Tray, ipcMain } = require('electron');
+const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -9,6 +10,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let tray;
 let shouldQuitApp = false;
 
 const createWindow = () => {
@@ -16,6 +18,9 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 400,
     height: 400,
+    webPreferences: {
+      nodeIntegration: true,
+    },
   });
 
   // and load the index.html of the app.
@@ -50,10 +55,27 @@ const createWindow = () => {
   }
 };
 
+const createTray = () => {
+  tray = new Tray(path.join(__dirname, 'assets/timer_small.png'));
+  tray.on('click', () => {
+    mainWindow.show();
+  });
+  tray.setTitle('timer');
+};
+
+const init = () => {
+  createTray();
+  createWindow();
+};
+
+ipcMain.on('update-timer', (event, arg) => {
+  tray.setTitle(`${arg}`);
+});
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', init);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

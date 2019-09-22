@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+// eslint-disable-next-line
+import { ipcRenderer } from 'electron';
 
 const TIMER_STORAGE = 'timer_storage';
 
@@ -12,6 +14,7 @@ const App = () => {
         setTimeInSecs((previousTime) => {
           const updatedTimer = previousTime + 1;
           localStorage.setItem(TIMER_STORAGE, updatedTimer);
+          ipcRenderer.send('update-timer', updatedTimer);
           return updatedTimer;
         });
       }, 1000));
